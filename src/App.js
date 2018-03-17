@@ -1,13 +1,14 @@
-import React, {Component} from 'react';
-import Movie from './Movie';
+import React, {Component} from "react";
+import Movie from "./Movie";
+import Navigation from "./Navigation";
+import TitleImage from "./TitleImage";
 
 class App extends Component {
     constructor() {
         super();
 
         this.state = {
-            movies: [],
-            isLoading: true
+            movies: []
         }
     }
 
@@ -17,31 +18,45 @@ class App extends Component {
 
     searchMovies = async () => {
         const movies = await this.callMoviesSearchAPI();
+        this.updateMovies(movies);
+    };
 
+    updateMovies = (movies) => {
         this.setState({
-            movies : movies,
-            isLoading : false
-        });
+            movies: movies
+        })
     };
 
     callMoviesSearchAPI = () => {
         return fetch("http://localhost/hello")
             .then(response => response.json())
-            .catch(error => error);
+            .catch(this.handleAPIError);
+    };
+
+    handleAPIError = () => {
+        return new Promise(function() {
+        });
     };
 
     render() {
-        if (this.state.isLoading) {
-            return (<p>Loading...</p>);
-        }
-
         return (
-            <div className="App">
-                {
-                    this.state.movies.map((movie, index) => {
-                        return <Movie title={movie.title} poster={movie.poster} key={index}/>
-                    })
-                }
+            <div className="container">
+                <div className="card">
+                    <TitleImage/>
+                    <br/>
+
+                    <div className="card-header">
+                        <Navigation/>
+                    </div>
+
+                    <div className="card card-body">
+                        {
+                            this.state.movies.map((movie, index) => {
+                                return <Movie title={movie.title} poster={movie.poster} key={index}/>
+                            })
+                        }
+                    </div>
+                </div>
             </div>
         );
     }
